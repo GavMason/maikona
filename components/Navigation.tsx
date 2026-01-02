@@ -7,21 +7,27 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navSvg, setNavSvg] = useState<string>('');
 
   useEffect(() => {
-    if (typeof window === 'undefined' || window.innerWidth <= 540) return;
+    fetch('/svgs/nav-desktop.svg')
+      .then(res => res.text())
+      .then(setNavSvg)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      
-      // Handle sticky positioning
+
       if (scrollY > 1) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
 
-      // Handle background fade with hysteresis
       if (scrollY > 150) {
         setShowBackground(true);
       } else if (scrollY < 100) {
@@ -34,11 +40,12 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#features', label: 'Features' },
-    { href: '#testimonials', label: 'Testimonials' },
-    { href: '#contact', label: 'Contact' },
+    { href: '#section2', label: 'Home' },
+    { href: '#section3', label: 'About' },
+    { href: '#section4', label: 'Features' },
+    { href: '#section5', label: 'How It Works' },
+    { href: '#section6', label: 'Pricing' },
+    { href: '#section7', label: 'Reviews' },
   ];
 
   return (
@@ -55,19 +62,19 @@ export default function Navigation() {
           transition: background-color 0.3s ease;
           overflow: visible;
         }
-        
+
         .nav-section.sticky-scrolled {
           position: fixed;
         }
-        
+
         .nav-section.sticky-background-active {
-          background-color: #e8dcc7;
+          background-color: #f5e6d3;
         }
 
         @media (max-width: 540px) {
           .nav-section.sticky {
             position: relative;
-            background-color: #e8dcc7;
+            background-color: #f5e6d3;
           }
           .collapsible-nav {
             display: none !important;
@@ -137,11 +144,15 @@ export default function Navigation() {
           background: rgba(248, 248, 248, 0.75);
           backdrop-filter: blur(10px);
           box-shadow: -5px 0 30px rgba(0, 0, 0, 0.08);
-          transform: translateX(${menuOpen ? '0' : '100%'});
+          transform: translateX(100%);
           transition: transform 0.3s ease;
           z-index: 101;
           padding-top: 90px;
           overflow-y: auto;
+        }
+
+        .hamburger-menu.open {
+          transform: translateX(0);
         }
 
         .hamburger-menu ul {
@@ -193,20 +204,20 @@ export default function Navigation() {
         }
       `}</style>
 
-      <nav
-        className={`nav-section sticky ${isScrolled ? 'sticky-scrolled' : ''} ${
+      <div
+        className={`section-container nav-section sticky collapsible-nav ${isScrolled ? 'sticky-scrolled' : ''} ${
           showBackground ? 'sticky-background-active' : ''
         }`}
       >
+        <a className="section-anchor" id="section1"></a>
         <div className="section-wrapper">
-          {/* Desktop nav will go here - for now keeping the SVG structure */}
-          <div className="collapsible-nav">
-            {/* Navigation SVG content from original */}
-          </div>
+          <div
+            className="section-svg desktop"
+            dangerouslySetInnerHTML={{ __html: navSvg }}
+          />
         </div>
-      </nav>
+      </div>
 
-      {/* Mobile hamburger menu */}
       <button
         className="hamburger-btn"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -219,7 +230,7 @@ export default function Navigation() {
         </div>
       </button>
 
-      <div className="hamburger-menu">
+      <nav className={`hamburger-menu ${menuOpen ? 'open' : ''}`}>
         <ul>
           {navLinks.map((link) => (
             <li key={link.href}>
@@ -229,7 +240,7 @@ export default function Navigation() {
             </li>
           ))}
         </ul>
-      </div>
+      </nav>
     </>
   );
 }
