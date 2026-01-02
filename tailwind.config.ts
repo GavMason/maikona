@@ -11,8 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: "#ff1744", // VizoCam red
-        secondary: "#e8dcc7", // Beige background
+        primary: "#d32f2f", // Maikona red
+        secondary: "#f5e6d3", // Beige background (warmer)
       },
       fontFamily: {
         sans: ['var(--font-hanken-grotesk)', 'system-ui', 'sans-serif'],
